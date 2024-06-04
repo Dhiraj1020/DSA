@@ -92,3 +92,110 @@ ostream& operator<< (ostream &out, const CList &c)
     
     return out;
 }
+
+void CList::Generic_delete(CNode* p_beg, CNode* p_mid, CNode* p_end)
+{
+    p_beg->m_pNextNode = p_end;
+    p_mid  = nullptr;
+    delete p_mid;
+}
+
+CNode* CList::SearchNode(data_t data)
+{
+    CNode* pRun = nullptr;
+
+    pRun = m_pHeadNode->m_pNextNode;
+
+    while (pRun != nullptr)
+    {
+        if(pRun->m_iData == data)
+            break;
+        pRun = pRun->m_pNextNode;
+    }
+
+    return pRun;
+}
+
+STATUS_T CList::Remove_start()
+{
+    Generic_delete(m_pHeadNode,m_pHeadNode->m_pNextNode,m_pHeadNode->m_pNextNode->m_pNextNode);
+    return SUCCESS_T;
+}
+
+STATUS_T CList::Remove_end()
+{
+    CNode* pRun = m_pHeadNode;
+    CNode* pPrevNode;
+    while (pRun->m_pNextNode != nullptr)
+    {
+        pPrevNode = pRun;
+        pRun = pRun->m_pNextNode;
+    }
+    
+    Generic_delete(pPrevNode,pRun,pRun->m_pNextNode);
+    return SUCCESS_T;
+}
+
+STATUS_T CList::Remove_Data(data_t data)
+{
+     CNode* pCurNode = nullptr;
+    CNode* pPrevNode = nullptr;
+
+    SearchAndGetPrev(pCurNode,pPrevNode,data);
+
+    if(pCurNode != NULL)
+    {
+        Generic_delete(pPrevNode,pCurNode,pCurNode->m_pNextNode);
+    }
+
+    return SUCCESS_T;
+}
+
+void CList::SearchAndGetPrev(CNode* pCurNode, CNode* pPrevNode, data_t data)
+{
+    CNode* pRun = nullptr;
+    CNode* pPNode = nullptr;
+
+    pRun = m_pHeadNode->m_pNextNode;
+
+    while (pRun != nullptr)
+    {
+        if(pRun->m_iData == data)
+            break;
+        pPNode = pRun;
+        pRun = pRun->m_pNextNode;
+    }
+
+    pCurNode = pRun;
+    pPrevNode = pPNode;
+}
+
+void CList::ReverseList()
+{
+    CNode* pRun = nullptr;
+    CNode* pRuntemp = nullptr;
+
+    pRun = m_pHeadNode->m_pNextNode->m_pNextNode;
+
+    while (pRun != nullptr)
+    {
+        pRuntemp = pRun->m_pNextNode;
+        Generic_insert(m_pHeadNode,pRun,m_pHeadNode->m_pNextNode);
+        pRun = pRuntemp;
+    }
+    
+}
+
+CNode* CList::GetMiddleNode()
+{
+    CNode* slow = nullptr;
+    CNode* fast = nullptr;
+
+    while(fast && fast->m_pNextNode)
+    {
+        slow = slow->m_pNextNode;
+        fast = fast->m_pNextNode->m_pNextNode;
+    }
+
+    return slow;
+}
